@@ -15,11 +15,28 @@ module Day1 =
     let writtenNumbers = ["one"; "two"; "three"; "four"; "five"; "six"; "seven"; "eight"; "nine"]        
     
     let numbers = [0;1;2;3;4;5;6;7;8;9] |> List.map (fun n -> sprintf "%d" n)
-        
+
+    let rec countSubstrings (input: string) (substring: string)  =
+      match input.IndexOf substring with
+      | -1 -> [(-1,substring)]
+      | n -> (n,substring) :: countSubstrings (input.Substring(n + 1)) substring     
+            
+    let findAllSubstringMatches (inputString: string) (substring: string) =
+        let rec findMatches (input: string) (sub: string) (startIndex: int) =
+            let index = input.IndexOf(sub, startIndex, StringComparison.Ordinal)
+            if index >= 0 then
+                (index, sub) :: findMatches input sub (index + 1)
+            else
+                []
+
+        findMatches inputString substring 0            
+            
     let findNumbers (numberList: string list) (calibration: Calibration) =
         numberList
-        |> List.map (fun n -> (calibration.IndexOf(n),n))
-        |> List.filter (fun (i, _) -> i <> -1)
+        // |> List.map (fun n -> (calibration.IndexOf(n),n))
+        |> List.map (fun n -> findAllSubstringMatches calibration n)
+        |> List.concat
+        |> List.filter (fun (n,_) -> n <> -1)
         
     let stripNumbers (calibration: Calibration) =
         let wNumbers = findNumbers writtenNumbers calibration

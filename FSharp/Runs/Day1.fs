@@ -72,7 +72,9 @@ let  ``Day 1 Part 2 Test`` () =
     
     let expected = [["two"; "1"; "nine"]; ["eight"; "two"; "three"]; ["one"; "2"; "three"];
                      ["two"; "one"; "3"; "four"]; ["4"; "nine"; "eight"; "seven"; "2"];
-                     ["one"; "eight"; "2"; "3"; "4"]; ["7"; "six"]]
+                     ["one"; "eight"; "2"; "3"; "4"]; ["7"; "six"];
+                     ["8"; "1"; "seven"; "9";  "two"; "1"]; ["9"; "six"; "seven"; "4"; "9"];
+                     ["six"; "7"; "one"; "six"]]
     
     let actual = lines
               |> List.map Day1.stripNumbers
@@ -90,7 +92,7 @@ let  ``Day 1 Part 2 Test 2`` () =
 
     printfn "%A" lines
     
-    let expected = [29; 83; 13; 24; 42; 14; 76]
+    let expected = [29; 83; 13; 24; 42; 14; 76; 81; 99; 66]
     
     let actual = lines
                  |> List.map Day1.stripNumbers
@@ -99,6 +101,28 @@ let  ``Day 1 Part 2 Test 2`` () =
     printfn "%A" actual 
 
     Assert.AreEqual(expected,actual)            
+
+[<Test>]
+let  ``Day 1 Part 2`` () =
+    
+    let testFile = Day1.fileName //+ ".Part2.test"
+    
+    let lines = General.readInput testFile
+
+    // printfn "%A" lines
+    
+    // let expected = [29; 83; 13; 24; 42; 14; 76]
+    
+    let actual = lines
+                 |> List.map (fun s -> s,Day1.stripNumbers s)
+                 |> List.map (fun (s,l) -> (s,Day1.createCalibration2 l))
+                 
+    // actual
+    // |> List.iter (fun (s,v) -> printfn $"{s}: {v}")
+    // printfn "%A" actual
+    printfn "%A" (actual |> List.map snd |> List.sum)
+
+    // Assert.AreEqual(expected,actual)            
 
 // [<Test>]
 // let  ``Day 1`` () =
