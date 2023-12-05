@@ -10,4 +10,9 @@ module General =
         let lines = File.ReadLines(Path.Combine(aocPath,file))
                     |> Seq.toList  
         
-        lines    
+        lines
+        
+    let stringToInt (inputString: string) =
+        match Int32.TryParse(inputString) with
+        | (true, result) -> Some result
+        | _ -> None        
