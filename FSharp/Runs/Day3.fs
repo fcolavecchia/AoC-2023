@@ -7,6 +7,15 @@ open AoC.Day3
 
 
 [<Test>]
+let  ``Day 3 Read Test `` () =
+    
+    let testFile = fileName + ".test"
+    
+    let bluePrint = createMatrix testFile        
+    printfn "%A" bluePrint
+ 
+
+[<Test>]
 let ``Day 3: find numbers in a row`` () =
     let s = "467..114.." |> Seq.toArray
 
@@ -75,7 +84,7 @@ let ``Day 3 Test`` () =
     let bluePrint = createMatrix testFile        
     printfn "%A" bluePrint
     
-    let valids = getValidPieces bluePrint
+    let valids = getValidPieces hasSymbolsAround bluePrint
     printfn "%A" valids
     
     let q =
@@ -90,7 +99,9 @@ let ``Day 3 Test`` () =
         q
         |> List.sum
         
-    printfn "partSum: %A" partsSum         
+    printfn "partSum: %A" partsSum
+    
+    Assert.AreEqual(4361,partsSum)
 
 [<Test>]
 let ``Day 3 Part 1`` () = 
@@ -100,7 +111,7 @@ let ``Day 3 Part 1`` () =
     let bluePrint = createMatrix testFile        
     printfn "%A" bluePrint
     
-    let valids = getValidPieces bluePrint
+    let valids = getValidPieces hasSymbolsAround bluePrint
     printfn "%A" valids
     
     let q =
@@ -116,69 +127,46 @@ let ``Day 3 Part 1`` () =
         |> List.sum
         
     printfn "partSum: %A" partsSum         
+    Assert.AreEqual(521515,partsSum)
 
-    
 [<Test>]
-let  ``Day 3 Read Test `` () =
-    
+let ``Day 3 Part 2 Test`` () = 
+
     let testFile = fileName + ".test"
     
     let bluePrint = createMatrix testFile        
     printfn "%A" bluePrint
-    // let repeatedItems =  getRepeatedItem items   
-    //      
-    // printfn "%A" repeatedItems
-    //
-    // let points = getPoints items
-    // let expected = 157
-    //
-    // Assert.AreEqual(expected,points)
     
-//
-// [<Test>]
-// let  ``Day 3`` () =
-//     
-//     let testFile = fileName
-//     
-//     let items = getItems testFile        
-//     printfn "%A" items 
-//     let repeatedItems =  getRepeatedItem items   
-//          
-//     printfn "%A" repeatedItems
-//     
-//     let points = getPoints items
-//     let expected = 7428
-//     
-//     Assert.AreEqual(expected,points)
-//     
-// [<Test>]
-// let  ``Day 3 Test, Part 2`` () =
-//     
-//     let testFile = fileName + ".test"
-//     
-//     let items = Part2.getItems testFile        
-//     printfn "%A" items 
-//     let repeatedItems =  Part2.getRepeatedItem items   
-//          
-//     printfn "%A" repeatedItems
-//     
-//     let points = Part2.getPoints items
-//     let expected = 70
-//     
-//     Assert.AreEqual(expected,points)
-//     
-// [<Test>]
-// let  ``Day 3, Part 2`` () =
-//     
-//     let testFile = fileName
-//     
-//     let items = Part2.getItems testFile        
-//     printfn "%A" items 
-//     let repeatedItems =  Part2.getRepeatedItem items   
-//          
-//     printfn "%A" repeatedItems
-//     
-//     let points = Part2.getPoints items
-//     let expected = 70
-//     
-//     Assert.AreEqual(expected,points)        
+    let valids = getGearPieces bluePrint
+    printfn "%A" valids
+    
+    let q =
+        valids
+        |> List.choose id
+    q        
+        |> List.iter (fun n -> printfn "%A" n )
+    
+    let gearValue = getGearValues q 
+    Assert.AreEqual(467835,gearValue)
+
+[<Test>]
+let ``Day 3 Part 2`` () = 
+
+    let testFile = fileName
+    
+    let bluePrint = createMatrix testFile        
+    // printfn "%A" bluePrint
+    
+    let valids = getGearPieces bluePrint
+    // printfn "%A" valids
+    
+    let q =
+        valids
+        |> List.choose id
+    q        
+        |> List.iter (fun n -> printfn "%A" n )
+    
+    let gearValue = getGearValues q 
+    Assert.AreEqual(467835,gearValue)
+
+    

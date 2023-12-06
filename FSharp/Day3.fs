@@ -62,7 +62,7 @@ module Day3 =
         let rec loop (l: int list) index (acc: (int * int list) list) accIdx : (int * int list) list =
             if index < l.Length then
                 
-                printfn $"l[{index}]: {l[index]} acc: %A{acc}"
+                // printfn $"l[{index}]: {l[index]} acc: %A{acc}"
                 
                 if l[index]-l[index-1] = 1 then                                        
                     let nextAcc = updateElement accIdx (fun v -> v @ [l[index-1]]) acc
@@ -100,7 +100,7 @@ module Day3 =
         let borderHigh = min (colHigh + 1) (numCols - 1)
         let borderLow = max (colLow - 1) 0 
         let cols = List.init (borderHigh - borderLow + 1 ) (fun v -> v + borderLow)
-        printfn $"%A{cols}"
+        // printfn $"%A{cols}"
         seq { for dr in offsets do
                 for dc in cols do
                     if isValid (row + dr) dc  then
@@ -112,13 +112,20 @@ module Day3 =
                         yield matrix.[row, colHigh + 1]                        
             }
         
+    let hasSymbolsAround neighbors =
+        neighbors
+            |> Seq.exists (fun v -> v <> '.')        
         
-    let getValidPieces (matrix: char[,]) =
+    let hasAsteriskAround neighbors =
+        neighbors
+            |> Seq.exists (fun v -> v = '*')        
+        
+    let getValidPieces neighborsPredicate (matrix: char[,]) =
         
         seq {
             for i = 0 to (Array2D.length1 matrix - 1 ) do
                 let row = matrix[i,*]
-                printfn $"row: %A{row}"
+                // printfn $"row: %A{row}"
                 let indexes,numbers = findNumbers row
                 let groups = groupNumbers indexes
                 if ((List.isEmpty groups) |> not) then 
@@ -126,9 +133,9 @@ module Day3 =
                         groups
                         |> List.map (fun (n,l) ->
                                     let neighbors = getNeighbors matrix i l[0] (l[l.Length-1])
-                                    let hasSymbolsAround =
-                                        neighbors
-                                        |> Seq.exists (fun v -> v <> '.')
+                                    let hasSymbolsAround = neighborsPredicate neighbors
+                                        // neighbors
+                                        // |> Seq.exists (fun v -> v <> '.')
                                     (n,hasSymbolsAround)                                
                                     )
                     (groups,okNumbers)
@@ -144,3 +151,76 @@ module Day3 =
                                         else
                                             None )
             }
+        
+    let findAdjacentNumbers (matrix: char[,]) (row:int) (col:int) =
+        
+        let numRows = Array2D.length1 matrix
+        let numCols = Array2D.length2 matrix
+
+        let findNumberAtColumn (row: char[]) col =
+            
+            let indexes,numbers = findNumbers row
+            let groups = groupNumbers indexes 
+            
+            let number =
+                groups
+                |> List.tryFind (fun (_,indexes) -> List.contains col indexes
+                                                    || List.contains (col+1) indexes
+                                                    || List.contains (col-1) indexes)
+                |> Option.map snd
+                |> Option.map (fun l ->
+                                    l
+                                    |> List.map (fun i -> row[i])
+                                    |> List.toArray
+                                    |> String
+                                    |> General.stringToInt
+                                    )
+                |> Option.bind id
+            number 
+        
+        let isValid r c =
+            r >= 0 && r < numRows && c >= 0 && c < numCols
+        
+        let offsets = [-1;0;1]
+        
+        let rowCandidates,colCandidates =
+            seq {
+                    for r in offsets do
+                        for c in offsets do
+                            if (isValid (row + r) (col + r) && (r, c) <> (0, 0)) then
+                                if Char.IsDigit(matrix[row + r, col + c]) then
+                                    yield (row + r,col + c)                                 
+            }
+            |> Seq.toList
+            |> List.unzip
+                   
+        let candidates =
+            (rowCandidates,colCandidates)
+            ||> List.map2 (fun r c -> findNumberAtColumn matrix[r, *] c)
+            |> List.distinct
+            
+                           
+        if (candidates.Length = 2) then
+                        
+            match candidates[0],candidates[1] with
+                | Some f, Some s -> Some (f,s)
+                | _ -> None 
+        else 
+            None 
+        
+    let getGearPieces (matrix: char[,]) =
+        
+        let numRows = Array2D.length1 matrix
+        let numCols = Array2D.length2 matrix
+    
+        seq {
+            for i=0 to numRows-1 do                 
+                for j=0 to numCols-1 do
+                    if (matrix[i,j] = '*') then
+                        findAdjacentNumbers matrix i j                         
+        }
+        |> Seq.toList
+        
+    let getGearValues gearPieces =
+        gearPieces
+        |> List.fold (fun acc (f,s) -> acc + f*s) 0 
