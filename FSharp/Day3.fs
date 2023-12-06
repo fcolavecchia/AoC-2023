@@ -74,10 +74,12 @@ module Day3 =
             else
                 let accUpdateLast = updateElement accIdx (fun v -> v @ [l[index-1]]) acc
                 accUpdateLast                                     
+        if List.isEmpty l then
+            []
+        else 
+            loop l 1 [(0,[])] 0 
             
-        loop l 1 [(0,[])] 0 
-            
-    let findNumbers (s:string) =
+    let findNumbers (s:char[]) =
         let indexes, numbers =
             s
             |> Seq.indexed
@@ -111,5 +113,34 @@ module Day3 =
             }
         
         
+    let getValidPieces (matrix: char[,]) =
         
-        
+        seq {
+            for i = 0 to (Array2D.length1 matrix - 1 ) do
+                let row = matrix[i,*]
+                printfn $"row: %A{row}"
+                let indexes,numbers = findNumbers row
+                let groups = groupNumbers indexes
+                if ((List.isEmpty groups) |> not) then 
+                    let okNumbers =
+                        groups
+                        |> List.map (fun (n,l) ->
+                                    let neighbors = getNeighbors matrix i l[0] (l[l.Length-1])
+                                    let hasSymbolsAround =
+                                        neighbors
+                                        |> Seq.exists (fun v -> v <> '.')
+                                    (n,hasSymbolsAround)                                
+                                    )
+                    (groups,okNumbers)
+                    ||> List.map2  (fun (_,g) (_,okn)  ->
+                                        if okn then
+                                            let number =
+                                                g
+                                                |> List.map (fun i -> row[i])
+                                                |> List.toArray
+                                                |> String
+                                                |> General.stringToInt
+                                            number 
+                                        else
+                                            None )
+            }

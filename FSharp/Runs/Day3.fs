@@ -8,7 +8,7 @@ open AoC.Day3
 
 [<Test>]
 let ``Day 3: find numbers in a row`` () =
-    let s = "467..114.."
+    let s = "467..114.." |> Seq.toArray
 
     let expectedIndexes = [0; 1; 2; 5; 6; 7]
     let expectedNumbers = ['4'; '6'; '7'; '1'; '1'; '4']
@@ -67,8 +67,56 @@ let ``Day 3: get neighbors`` () =
 
     Assert.AreEqual(expected3,actual3)    
     
+[<Test>]
+let ``Day 3 Test`` () = 
+
+    let testFile = fileName + ".test"
     
+    let bluePrint = createMatrix testFile        
+    printfn "%A" bluePrint
     
+    let valids = getValidPieces bluePrint
+    printfn "%A" valids
+    
+    let q =
+        valids
+        |> Seq.toList             
+        |> List.collect id 
+        |> List.choose id
+    q        
+        |> List.iter (fun n -> printfn "%A" n )
+    
+    let partsSum =
+        q
+        |> List.sum
+        
+    printfn "partSum: %A" partsSum         
+
+[<Test>]
+let ``Day 3 Part 1`` () = 
+
+    let testFile = fileName 
+    
+    let bluePrint = createMatrix testFile        
+    printfn "%A" bluePrint
+    
+    let valids = getValidPieces bluePrint
+    printfn "%A" valids
+    
+    let q =
+        valids
+        |> Seq.toList             
+        |> List.collect id 
+        |> List.choose id
+    q        
+        |> List.iter (fun n -> printfn "%A" n )
+    
+    let partsSum =
+        q
+        |> List.sum
+        
+    printfn "partSum: %A" partsSum         
+
     
 [<Test>]
 let  ``Day 3 Read Test `` () =
