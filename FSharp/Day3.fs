@@ -78,12 +78,37 @@ module Day3 =
         loop l 1 [(0,[])] 0 
             
     let findNumbers (s:string) =
-        s
-        |> Seq.mapi (fun i c -> (i,c))
-        |> Seq.filter (fun (i,c) -> Char.IsDigit(c))
+        let indexes, numbers =
+            s
+            |> Seq.indexed
+            |> Seq.filter (fun (i,c) -> Char.IsDigit(c))
+            |> Seq.toList
+            |> List.unzip
          
-           
+        indexes,numbers           
         
+    let getNeighbors (matrix: 'a[,]) (row: int) (colLow: int) (colHigh:int) =
+        let numRows = Array2D.length1 matrix
+        let numCols = Array2D.length2 matrix
+
+        let isValid r c =
+            r >= 0 && r < numRows && c >= 0 && c < numCols
+
+        let offsets = [-1;1]
+        let borderHigh = min (colHigh + 1) (numCols - 1)
+        let borderLow = max (colLow - 1) 0 
+        let cols = List.init (borderHigh - borderLow + 1 ) (fun v -> v + borderLow)
+        printfn $"%A{cols}"
+        seq { for dr in offsets do
+                for dc in cols do
+                    if isValid (row + dr) dc  then
+                            // printfn $"M[{row + dr}, {colLow + dc}]: {matrix.[row + dr, colLow + dc]}"
+                            yield matrix.[row + dr, dc]
+              if isValid row (colLow - 1) then                         
+                        yield matrix.[row, colLow - 1]
+              if isValid row (colHigh + 1) then                         
+                        yield matrix.[row, colHigh + 1]                        
+            }
         
         
         

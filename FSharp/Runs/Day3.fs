@@ -10,10 +10,16 @@ open AoC.Day3
 let ``Day 3: find numbers in a row`` () =
     let s = "467..114.."
 
-    let numbers = findNumbers s
+    let expectedIndexes = [0; 1; 2; 5; 6; 7]
+    let expectedNumbers = ['4'; '6'; '7'; '1'; '1'; '4']
+    
+    
+    let indexes,numbers = findNumbers s
+    printfn $"%A{indexes}"
     printfn $"%A{numbers}"
-    numbers
-    |> Seq.iter (fun (i,_) -> printfn $"{i}")
+    Assert.AreEqual(expectedIndexes,indexes)
+    Assert.AreEqual(expectedNumbers,numbers)
+    
 
 [<Test>]
 let ``Day 3: update elements`` () =
@@ -35,7 +41,35 @@ let ``Day 3: group Numbers`` () =
     
     Assert.AreEqual(expected,actual)
 
+[<Test>]
+let ``Day 3: get neighbors`` () =
+    
+    let testFile = fileName + ".test"
+    
+    let bluePrint = createMatrix testFile
+    printfn $"%A{bluePrint}"
 
+    let actual1 = getNeighbors bluePrint 0 0 2
+    let expected1 = ['.'; '.'; '.'; '*'; '.']
+    printfn "%A" (actual1 |> Seq.toList)
+    
+    Assert.AreEqual(expected1,actual1)
+    
+    let actual2 = getNeighbors bluePrint 6 2 4
+    let expected2 = ['.'; '.'; '.'; '.'; '+'; '.'; '.'; '.'; '.'; '.'; '.'; '.']
+    printfn "%A" (actual2 |> Seq.toList)
+
+    Assert.AreEqual(expected2,actual2)
+
+    let actual3 = getNeighbors bluePrint 8 7 9
+    let expected3 = ['7'; '5'; '5'; '.'; '9'; '8'; '.'; '.'; '.']
+    printfn "%A" (actual3 |> Seq.toList)
+
+    Assert.AreEqual(expected3,actual3)    
+    
+    
+    
+    
 [<Test>]
 let  ``Day 3 Read Test `` () =
     
