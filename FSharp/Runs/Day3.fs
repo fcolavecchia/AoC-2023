@@ -12,7 +12,28 @@ let ``Day 3: find numbers in a row`` () =
 
     let numbers = findNumbers s
     printfn $"%A{numbers}"
+    numbers
+    |> Seq.iter (fun (i,_) -> printfn $"{i}")
+
+[<Test>]
+let ``Day 3: update elements`` () =
+    let acc = [(0,[])]
+    let expected = [(0,[1])]
+    let actual = updateElement 0 (fun l -> l @ [1]) acc
     
+    Assert.AreEqual(expected,actual)
+    
+
+[<Test>]
+let ``Day 3: group Numbers`` () =
+    let s = [0;1;2;3;6;7]
+
+    let expected = [(0,[0;1;2;3]);(1,[6;7])]
+    
+    let actual = groupNumbers s
+    printfn $"%A{actual}"
+    
+    Assert.AreEqual(expected,actual)
 
 
 [<Test>]
