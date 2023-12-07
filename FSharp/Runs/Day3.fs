@@ -167,6 +167,6 @@ let ``Day 3 Part 2`` () =
         |> List.iter (fun n -> printfn "%A" n )
     
     let gearValue = getGearValues q 
-    Assert.AreEqual(467835,gearValue)
+    Assert.AreEqual(69527306,gearValue)
 
     
