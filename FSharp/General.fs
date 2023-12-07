@@ -15,4 +15,9 @@ module General =
     let stringToInt (inputString: string) =
         match Int32.TryParse(inputString) with
         | (true, result) -> Some result
-        | _ -> None        
+        | _ -> None
+        
+    let stringToInt64 (inputString: string) =
+        match Int64.TryParse(inputString) with
+        | (true, result) -> Some result
+        | _ -> None                        

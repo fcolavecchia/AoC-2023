@@ -9,8 +9,8 @@ module Day5 =
     
     type Range =
         {
-            Start: int
-            Span: int 
+            Start: int64
+            Span: int64 
         }
         
     type Source = Range
@@ -39,7 +39,7 @@ module Day5 =
         
         seedStr.Trim().Split(' ')
         |> Seq.toList
-        |> List.map General.stringToInt
+        |> List.map General.stringToInt64
         |> List.choose id 
         
         
@@ -78,7 +78,7 @@ module Day5 =
             let triplet =
                 s
                 |> readTriplet
-                |> List.map General.stringToInt
+                |> List.map General.stringToInt64
                 |> List.choose id
             tripletToSrcDest triplet[1] triplet[0] triplet[2]
 
@@ -126,7 +126,7 @@ module Day5 =
             let isInRange =
                 m.Ranges
                 |> List.tryFind(fun (s,_) ->
-                                s.Start <= inValue && inValue <= (s.Start + s.Span - 1) )
+                                s.Start <= inValue && inValue <= (s.Start + s.Span - 1L) )
             
             let outValue =
                 match isInRange with
@@ -152,4 +152,48 @@ module Day5 =
         |> transform MapTypes.LightToTemperature maps
         |> transform MapTypes.TemperatureToHumidity maps
         |> transform MapTypes.HumidityToLocation maps 
+            
+            
+    module Part2 =
+        let readSeedsAsRanges (lines: string) =     
+            let seedStr = lines.Split(':')[1]
+            
+            seedStr.Trim().Split(' ')
+            |> Seq.toList
+            |> List.map General.stringToInt64
+            |> List.choose id
+            |> List.pairwise
+            |> List.indexed
+            |> List.filter (fun (i, _) -> i%2 = 0)
+            |> List.map snd
+            |> List.map (fun (s,span) ->
+                            {
+                                Start = s
+                                Span = span 
+                            })
+            
+            
+        let seedToLocation maps range =
+            
+            let mutable maxLocation = Int64.MaxValue
+            
+            
+            for seed in range.Start..(range.Start + range.Span - 1L) do 
+            
+                let location = 
+                    seed
+                    |> transform MapTypes.SeedToSoil maps
+                    |> transform MapTypes.SoilToFertilizer maps
+                    |> transform MapTypes.FertilizerToWater maps
+                    |> transform MapTypes.WaterToLight maps
+                    |> transform MapTypes.LightToTemperature maps
+                    |> transform MapTypes.TemperatureToHumidity maps
+                    |> transform MapTypes.HumidityToLocation maps             
+                
+                maxLocation <- min maxLocation location
+                
+            maxLocation 
+                
+                
+            
             
