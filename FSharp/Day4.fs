@@ -12,9 +12,17 @@ module Day4 =
         let game = s.Split(":")[1]
         
         let w = game.Split('|')
-        let winning = w[0].Trim() |> Seq.map (fun w -> w. <> " ") 
-        let mine = w[1].Trim().Split(' ') |> Seq.filter (fun w -> w <> " ")
-        
+        let winning = w[0]
+                      |> Seq.chunkBySize 3
+                      |> Seq.map (fun a -> a |> String)
+                      |> Seq.map (fun s -> s.Trim())
+                      
+        let mine = w[1]
+                    |> Seq.chunkBySize 3
+                    |> Seq.map (fun a -> a |> String)
+                    |> Seq.map (fun s -> s.Trim())
+        printf $"w: %A{winning}"
+        printfn $"m: %A{mine}"
         winning,mine
         
     let computeWinners winning mine =
